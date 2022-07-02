@@ -31,7 +31,7 @@ struct segtree {
     set(i, v, 0, 0, sz);
   }
 
-  void build(vector<int> a, int x, int l, int r) {
+  void build(vector<int> &a, int x, int l, int r) {
     if (l + 1 == r) {
       if (l < (int)a.size()) {
         t[x] = a[l];
@@ -44,7 +44,7 @@ struct segtree {
     t[x] = t[2 * x + 1] + t[2 * x + 2];
   }
 
-  void build(vector<int> a) {
+  void build(vector<int> &a) {
     build(a, 0, 0, sz);
   }
 

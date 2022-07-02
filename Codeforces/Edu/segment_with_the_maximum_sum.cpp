@@ -4,7 +4,7 @@ using namespace std;
 typedef long long ll;
 
 struct segment {
-  ll mx, sum, pref, suf;
+  ll mx, pref, suf, sum;
 };
 
 struct segtree {
@@ -21,16 +21,16 @@ struct segtree {
 
   segment single(int v) {
     int x = max(v, 0);
-    return {x, v, x, x};
+    return {x, x, x, v};
   }
 
-  segment comb(segment a, segment b) {
-    segment c;
-    c.mx = max({a.mx, b.mx, a.suf + b.pref});
-    c.sum = a.sum + b.sum;
-    c.pref = max(a.pref, a.sum + b.pref);
-    c.suf = max(b.suf, b.sum + a.suf);
-    return c;
+  segment merge(segment a, segment b) {
+    return {
+      max({a.mx, b.mx, a.suf + b.pref}),
+      max(a.pref, a.sum + b.pref),
+      max(b.suf, a.suf + b.sum),
+      a.sum + b.sum
+    };
   }
 
   void set(int i, int v, int x, int l, int r) {
@@ -44,14 +44,14 @@ struct segtree {
     } else {
       set(i, v, 2 * x + 2, mid, r);
     }
-    t[x] = comb(t[2 * x + 1], t[2 * x + 2]);
+    t[x] = merge(t[2 * x + 1], t[2 * x + 2]);
   }
 
   void set(int i, int v) {
     set(i, v, 0, 0, sz);
   }
 
-  void build(vector<int> a, int x, int l, int r) {
+  void build(vector<int> &a, int x, int l, int r) {
     if (l + 1 == r) {
       if (l < (int)a.size()) {
         t[x] = single(a[l]);
@@ -61,10 +61,10 @@ struct segtree {
     int mid = l + (r - l) / 2;
     build(a, 2 * x + 1, l, mid);
     build(a, 2 * x + 2, mid, r);
-    t[x] = comb(t[2 * x + 1], t[2 * x + 2]);
+    t[x] = merge(t[2 * x + 1], t[2 * x + 2]);
   }
 
-  void build(vector<int> a) {
+  void build(vector<int> &a) {
     build(a, 0, 0, sz);
   }
 
@@ -76,7 +76,7 @@ struct segtree {
       return t[x];
     }
     int mid = lx + (rx - lx) / 2;
-    return comb(query(l, r, 2 * x + 1, lx, mid), query(l, r, 2 * x + 2, mid, rx));
+    return merge(query(l, r, 2 * x + 1, lx, mid), query(l, r, 2 * x + 2, mid, rx));
   }
 
   int query(int l, int r) {
