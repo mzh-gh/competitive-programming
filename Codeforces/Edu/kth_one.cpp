@@ -3,13 +3,9 @@ using namespace std;
 
 typedef long long ll;
 
-struct segment {
-  ll mx, pref, suf, sum;
-};
-
 struct segtree {
   int sz;
-  vector<segment> t;
+  vector<int> t;
 
   void init(int n) {
     sz = 1;
@@ -19,23 +15,9 @@ struct segtree {
     t.resize(2 * sz);
   }
 
-  segment single(int v) {
-    int x = max(v, 0);
-    return {x, x, x, v};
-  }
-
-  segment merge(segment a, segment b) {
-    return {
-      max({a.mx, b.mx, a.suf + b.pref}),
-      max(a.pref, a.sum + b.pref),
-      max(b.suf, a.suf + b.sum),
-      a.sum + b.sum
-    };
-  }
-
   void set(int i, int v, int x, int l, int r) {
     if (l + 1 == r) {
-      t[x] = single(v);
+      t[x] = v;
       return;
     }
     int mid = l + (r - l) / 2;
@@ -44,7 +26,7 @@ struct segtree {
     } else {
       set(i, v, 2 * x + 2, mid, r);
     }
-    t[x] = merge(t[2 * x + 1], t[2 * x + 2]);
+    t[x] = t[2 * x + 1] + t[2 * x + 2];
   }
 
   void set(int i, int v) {
@@ -54,33 +36,33 @@ struct segtree {
   void build(vector<int> &a, int x, int l, int r) {
     if (l + 1 == r) {
       if (l < (int)a.size()) {
-        t[x] = single(a[l]);
+        t[x] = a[l];
       }
       return;
     }
     int mid = l + (r - l) / 2;
     build(a, 2 * x + 1, l, mid);
     build(a, 2 * x + 2, mid, r);
-    t[x] = merge(t[2 * x + 1], t[2 * x + 2]);
+    t[x] = t[2 * x + 1] + t[2 * x + 2];
   }
 
   void build(vector<int> &a) {
     build(a, 0, 0, sz);
   }
 
-  segment query(int l, int r, int x, int lx, int rx) {
-    if (lx >= r || rx < l) {
-      return single(0);
+  int query(int l, int r, int x, int k) {
+    if (l + 1 == r) {
+      return l;
     }
-    if (lx >= l && rx <= r) {
-      return t[x];
+    int mid = l + (r - l) / 2;
+    if (t[2 * x + 1] < k) {
+      return query(mid, r, 2 * x + 2, k - t[2 * x + 1]);
     }
-    int mid = lx + (rx - lx) / 2;
-    return merge(query(l, r, 2 * x + 1, lx, mid), query(l, r, 2 * x + 2, mid, rx));
+    return query(l, mid, 2 * x + 1, k);
   }
 
-  ll query(int l, int r) {
-    return query(l, r, 0, 0, sz).mx;
+  int query(int k) {
+    return query(0, sz, 0, k);
   }
 };
 
@@ -96,11 +78,20 @@ int main() {
   segtree st;
   st.init(n);
   st.build(a);
-  cout << st.query(0, n) << '\n';
   while (m--) {
-    int i, v;
-    cin >> i >> v;
-    st.set(i, v);
-    cout << st.query(0, n) << '\n';
+    int op;
+    cin >> op;
+    if (op == 1) {
+      int i;
+      cin >> i;
+      a[i] ^= 1;
+      st.set(i, a[i]);
+    } else {
+      int k;
+      cin >> k;
+      k++;
+      // Query k
+      cout << st.query(k) << '\n';
+    }
   }
 }
