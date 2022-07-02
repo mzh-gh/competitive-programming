@@ -10,7 +10,7 @@ struct segtree {
     while (sz < n) {
       sz *= 2;
     }
-    t.resize(sz);
+    t.resize(2 * sz);
   }
 
   void set(int i, int v, int x, int l, int r) {
@@ -56,7 +56,7 @@ struct segtree {
       return t[x];
     }
     int mid = lx + (rx - lx) / 2;
-    return query(l, r, 2 * x + 1, lx, mid) + query(l, r, 2 * x + 1, mid, rx);
+    return query(l, r, 2 * x + 1, lx, mid) + query(l, r, 2 * x + 2, mid, rx);
   }
 
   int query(int l, int r) {
