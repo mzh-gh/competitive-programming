@@ -49,7 +49,7 @@ struct segtree {
   }
 
   int query(int l, int r, int x, int lx, int rx) {
-    if (lx >= r || rx < l) {
+    if (lx >= r || rx <= l) {
       return 0;
     }
     if (lx >= l && rx <= r) {
