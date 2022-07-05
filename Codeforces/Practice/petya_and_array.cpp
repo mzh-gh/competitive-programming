@@ -1,91 +1,80 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long ll;
+#define all(x) x.begin(), x.end()
+#define sz(x) (int)x.size()
 
-map<int, ll> orig;
-map<ll, int> ind;
+int sz;
+vector<long long> t;
 
-struct segtree {
-  int sz;
-  vector<ll> t;
-
-  void init(int n) {
-    sz = 1;
-    while (sz < n) {
-      sz *= 2;
-    }
-    t.resize(2 * sz);
+void init(int n) {
+  sz = 1;
+  while (sz < n) {
+    sz *= 2;
   }
+  t.resize(2 * sz);
+}
 
-  // Just set using compressed indices
-  void set(int i, int v, int x, int l, int r) {
-    if (l + 1 == r) {
-      t[x] = v;
-      return;
-    }
-    int mid = l + (r - l) / 2;
-    if (orig[i] < orig[mid]) {
-      set(i, v, 2 * x + 1, l, mid);
-    } else {
-      set(i, v, 2 * x + 2, mid, r);
-    }
-    t[x] = t[2 * x + 1] + t[2 * x + 2];
+void inc(int i, int x, int l, int r) {
+  if (l + 1 == r) {
+    t[x] = t[x] + 1;
+    return;
   }
+  int mid = l + (r - l) / 2;
+  if (i < mid) {
+    inc(i, 2 * x + 1, l, mid);
+  } else {
+    inc(i, 2 * x + 2, mid, r);
+  }
+  t[x] = t[2 * x + 1] + t[2 * x + 2];
+}
 
-  void set(int i, int v) {
-    set(i, v, 0, 0, sz);
-  }
+void inc(int i) {
+  inc(i, 0, 0, sz);
+}
 
-  // Here, l and r are positions
-  // lx and rx are indices in t
-  ll query(ll l, ll r, int x, int lx, int rx) {
-    if (orig[lx] >= r || l >= orig[rx]) {
-      return 0;
-    }
-    if (orig[lx] >= l && orig[rx] <= r) {
-      return t[x];
-    }
-    int mid = lx + (rx - lx) / 2;
-    return query(l, r, 2 * x + 1, lx, mid) + query(l, r, 2 * x + 2, mid, rx);
+int query(int l, int r, int x, int lx, int rx) {
+  if (lx >= r || rx <= l) {
+    return 0;
   }
+  if (lx >= l && rx <= r) {
+    return t[x];
+  }
+  
+  int mid = lx + (rx - lx) / 2;
+  return query(l, r, 2 * x + 1, lx, mid) + query(l, r, 2 * x + 2, mid, rx);
+}
 
-  ll query(ll l, ll r) {
-    return query(l, r, 0, 0, sz);
-  }
-};
+int query(int l, int r) {
+  return query(l, r, 0, 0, sz);
+}
 
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
-  ll n, t;
-  cin >> n >> t;
-  vector<ll> pref(n);
+  long long n, k;
+  cin >> n >> k;
+  vector<long long> pref(n);
   for (int i = 0; i < n; i++) {
     cin >> pref[i];
+    if (i > 0) {
+      pref[i] += pref[i - 1];
+    }
   }
-  for (int i = 1; i < n; i++) {
-    pref[i] += pref[i - 1];
-  }
-
-  vector<ll> unq = pref;
-  sort(unq.begin(), unq.end());
-  unq.erase(unique(unq.begin(), unq.end()), unq.end());
-  int m = unq.size();
-  for (int i = 0; i < m; i++) {
-    orig[i] = unq[i];
-    ind[unq[i]] = i;
-  }
-
-  int ans = 0;
-  segtree st;
-  st.init(m);
+  vector<long long> a = pref;
+  a.push_back(0);
+  sort(all(a));
+  a.resize(unique(all(a)) - a.begin());
+  init(sz(a));
+  inc(lower_bound(all(a), 0) - a.begin());
+  long long ans = 0;
   for (int r = 0; r < n; r++) {
     // pref[r] - pref[l] < t
-    // pref[r] + t < pref[l]
-    // +1 to ans for each element in the range [pref[r] + t + 1 ... INF)
-    ans += st.query(pref[r] + t + 1, 2e18);
-    st.set(ind[pref[r]], ind[pref[r]] + 1);
+    // pref[r] - t < pref[l]
+    // pref[l] > pref[r] - t
+    // All elements (pref[r] - k ... INF] work
+    ans += query(upper_bound(all(a), pref[r] - k) - a.begin(), sz(a));
+    inc(lower_bound(all(a), pref[r]) - a.begin());
   }
-  cout << ans;
+  cout << ans << '\n';
 }
