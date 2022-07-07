@@ -50,4 +50,23 @@ int query(int l, int r, int v) {
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+  int n, m;
+  cin >> n >> m;
+  vector<int> a(n);
+  for (int i = 0; i < n; i++) {
+    cin >> a[i];
+  }
+  init(n);
+  build(a);
+  while (m--) {
+    int lq, rq, k;
+    cin >> lq >> rq >> k;
+    lq--;
+    int l = -1e9, r = 1e9 + 1;
+    while (l + 1 < r) {
+      int mid = l + (r - l) / 2;
+      (query(lq, rq, mid) < k ? l : r) = mid;
+    }
+    cout << l << '\n';
+  }
 }
