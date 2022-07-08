@@ -76,4 +76,7 @@ vector<pair<int, int>> factorize(int n) {
   return res;
 }
 
-int main() {}
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+}

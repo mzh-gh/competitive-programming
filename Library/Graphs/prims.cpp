@@ -1,12 +1,10 @@
-// mzh
-
 #include <bits/stdc++.h>
-
 using namespace std;
 
-#define int int64_t
+#define all(x) x.begin(), x.end()
+#define sz(x) (int)x.size()
 
-int32_t main() {
+int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
   int n, m;

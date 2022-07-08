@@ -1,14 +1,12 @@
-// mzh
-
 #include <bits/stdc++.h>
-
 using namespace std;
 
-#define int int64_t
+#define all(x) x.begin(), x.end()
+#define sz(x) (int)x.size()
 
 vector<int> topsort(vector<vector<int>> g) {
   // O(V + E), res.size() < n if the graph isn't a DAG
-  int n = g.size();
+  int n = sz(g);
   vector<int> in(n);
   for (int u = 0; u < n; u++) {
     for (int v : g[u]) {
@@ -36,4 +34,7 @@ vector<int> topsort(vector<vector<int>> g) {
   return res;
 }
 
-int32_t main() {}
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+}

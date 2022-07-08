@@ -32,15 +32,15 @@ void build(vector<int> &a) {
   build(a, 0, 0, sz);
 }
 
-int query(int l, int r, int v, int x, int lx, int rx) {
-  if (lx >= r || rx <= l) {
+int query(int L, int R, int v, int x, int l, int r) {
+  if (l >= R || r <= L) {
     return 0;
   }
-  if (lx >= l && rx <= r) {
+  if (l >= L && r <= R) {
     return lower_bound(all(t[x]), v) - t[x].begin(); // Elements < v
   }
-  int mid = lx + (rx - lx) / 2;
-  return query(l, r, v, 2 * x + 1, lx, mid) + query(l, r, v, 2 * x + 2, mid, rx);
+  int mid = l + (r - l) / 2;
+  return query(L, R, v, 2 * x + 1, l, mid) + query(L, R, v, 2 * x + 2, mid, r);
 }
 
 int query(int l, int r, int v) {
