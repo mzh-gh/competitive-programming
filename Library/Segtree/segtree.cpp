@@ -31,6 +31,10 @@ struct segtree {
     tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
   }
 
+  void build(vector<int> &a) {
+    build(a, 0, 0, sz);
+  }
+
   void update(int L, int R, int x, int l, int r, int v) {
     if (lazy[x] != 0) {
       tree[x] += (r - l + 1) * lazy[x];
@@ -57,6 +61,10 @@ struct segtree {
     tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
   }
 
+  void update(int L, int R, int v) {
+    update(L, R, 0, 0, sz, v);
+  }
+
   ll query(int L, int R, int x, int l, int r) {
     if (lazy[x] != 0) {
       tree[x] += (r - l + 1) * lazy[x];
@@ -74,6 +82,10 @@ struct segtree {
     }
     int mid = l + (r - l) / 2;
     return query(L, R, 2 * x + 1, l, mid) + query(L, R, 2 * x + 2, mid, r);
+  }
+
+  ll query(int L, int R) {
+    query(L, R, 0, 0, sz);
   }
 };
 
