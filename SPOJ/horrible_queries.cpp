@@ -65,7 +65,7 @@ struct segtree {
     update(L, R, 0, 0, sz, v);
   }
 
-  int query(int L, int R, int x, int l, int r) {
+  long long query(int L, int R, int x, int l, int r) {
     if (lazy[x] != 0) {
       tree[x] += (r - l) * lazy[x];
       if (l != r - 1) {
@@ -84,13 +84,33 @@ struct segtree {
     return query(L, R, 2 * x + 1, l, mid) + query(L, R, 2 * x + 2, mid, r);
   }
 
-  int query(int L, int R) {
+  long long query(int L, int R) {
     return query(L, R, 0, 0, sz);
   }
 };
 
-int32_t main() {
+int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+  int tc;
+  cin >> tc;
+  while (tc--) {
+    int n, m;
+    cin >> n >> m;
+    segtree st;
+    st.init(n);
+    while (m--) {
+      int op, l, r;
+      cin >> op >> l >> r;
+      l--;
+      if (op == 0) {
+        int v;
+        cin >> v;
+        st.update(l, r, v);
+      } else {
+        cout << st.query(l, r) << '\n';
+      }
+    }
+  }
 }
 

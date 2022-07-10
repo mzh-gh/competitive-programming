@@ -6,8 +6,8 @@ using namespace std;
 
 struct segtree {
   int sz;
-  vector<long long> tree;
-  vector<long long> lazy;
+  vector<int> tree;
+  vector<int> lazy; // Flips in the current segment
 
   void init(int n) {
     sz = 1;
@@ -35,12 +35,12 @@ struct segtree {
     build(a, 0, 0, sz);
   }
 
-  void update(int L, int R, int x, int l, int r, int v) {
+  void update(int L, int R, int x, int l, int r) {
     if (lazy[x] != 0) {
-      tree[x] += (r - l) * lazy[x];
+      tree[x] = (r - l) - tree[x];
       if (l != r - 1) {
-        lazy[2 * x + 1] += lazy[x];
-        lazy[2 * x + 2] += lazy[x];
+        lazy[2 * x + 1] ^= 1;
+        lazy[2 * x + 2] ^= 1;
       }
       lazy[x] = 0;
     }
@@ -48,29 +48,29 @@ struct segtree {
       return;
     }
     if (l >= L && r <= R) {
-      tree[x] += 1ll * (r - l) * v;
+      tree[x] = (r - l) - tree[x];
       if (l != r - 1) {
-        lazy[2 * x + 1] += v;
-        lazy[2 * x + 2] += v;
+        lazy[2 * x + 1] ^= 1;
+        lazy[2 * x + 2] ^= 1;
       }
       return;
     }
     int mid = l + (r - l) / 2;
-    update(L, R, 2 * x + 1, l, mid, v);
-    update(L, R, 2 * x + 2, mid, r, v);
+    update(L, R, 2 * x + 1, l, mid);
+    update(L, R, 2 * x + 2, mid, r);
     tree[x] = tree[2 * x + 1] + tree[2 * x + 2];
   }
 
-  void update(int L, int R, int v) {
-    update(L, R, 0, 0, sz, v);
+  void update(int L, int R) {
+    update(L, R, 0, 0, sz);
   }
 
   int query(int L, int R, int x, int l, int r) {
     if (lazy[x] != 0) {
-      tree[x] += (r - l) * lazy[x];
+      tree[x] = (r - l) - tree[x];
       if (l != r - 1) {
-        lazy[2 * x + 1] += lazy[x];
-        lazy[2 * x + 2] += lazy[x];
+        lazy[2 * x + 1] ^= 1;
+        lazy[2 * x + 2] ^= 1;
       }
       lazy[x] = 0;
     }
@@ -89,8 +89,45 @@ struct segtree {
   }
 };
 
-int32_t main() {
+int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+  int n;
+  cin >> n;
+  vector<vector<int>> on(20, vector<int>(n));
+  for (int i = 0; i < n; i++) {
+    int x;
+    cin >> x;
+    for (int bit = 0; bit < 20; bit++) {
+      on[bit][i] = (x >> bit) & 1;
+    }
+  }
+  vector<segtree> st(20);
+  for (int i = 0; i < 20; i++) {
+    st[i].init(n);
+    st[i].build(on[i]);
+  }
+  int m;
+  cin >> m;
+  while (m--) {
+    int op, l, r;
+    cin >> op >> l >> r;
+    l--;
+    if (op == 1) {
+      long long ans = 0;
+      for (int i = 0; i < 20; i++) {
+        ans += (1ll << i) * st[i].query(l, r);
+      }
+      cout << ans << '\n';
+    } else {
+      int x;
+      cin >> x;
+      for (int i = 0; i < 20; i++) {
+        if ((x >> i) & 1) {
+          st[i].update(l, r);
+        }
+      }
+    }
+  }
 }
 
