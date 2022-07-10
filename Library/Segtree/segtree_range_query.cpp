@@ -1,8 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#define all(x) x.begin(), x.end()
+#define sz(x) (int)x.size()
+
 int sz;
-vector<int> t;
+vector<long long> t;
 
 void init(int n) {
   sz = 1;
@@ -32,7 +35,7 @@ void upd(int i, int v) {
 
 void build(vector<int> &a, int x, int l, int r) {
   if (l + 1 == r) {
-    if (l < (int)a.size()) {
+    if (l < sz(a)) {
       t[x] = a[l];
     }
     return;
@@ -47,7 +50,7 @@ void build(vector<int> &a) {
   build(a, 0, 0, sz);
 }
 
-int query(int L, int R, int x, int l, int r) {
+long long query(int L, int R, int x, int l, int r) {
   if (l >= R || r <= L) {
     return 0;
   }
@@ -58,7 +61,7 @@ int query(int L, int R, int x, int l, int r) {
   return query(L, R, 2 * x + 1, l, mid) + query(L, R, 2 * x + 2, mid, r);
 }
 
-int query(int l, int r) {
+long long query(int l, int r) {
   return query(l, r, 0, 0, sz);
 }
 
