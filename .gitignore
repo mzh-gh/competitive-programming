@@ -2,4 +2,3 @@
 *.out
 .DS_Store
 /sandbox.cpp
-**/.vscode/
