@@ -68,17 +68,20 @@ int main() {
   if (cycle.empty()) {
     cout << -1;
   } else {
-    FOR(i, 2, cycle.size()) {
-      if (adj[cycle[i]][cycle[0]]) {
-        cout << cycle[0] + 1 << ' ' << cycle[i - 1] + 1 << ' ' << cycle[i] + 1;
-        return 0;
-      }
-    }
+
     // DEBUG
     FOR(i, 0, cycle.size()) {
       cout << cycle[i] + 1 << ' ';
     }
     cout << '\n';
     cout << adj[cycle.back()][cycle[0]] << '\n';
+    
+    
+    FOR(i, 2, cycle.size()) {
+      if (adj[cycle[i]][cycle[0]]) {
+        cout << cycle[0] + 1 << ' ' << cycle[i - 1] + 1 << ' ' << cycle[i] + 1;
+        return 0;
+      }
+    }
   }
 }

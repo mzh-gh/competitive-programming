@@ -2,17 +2,11 @@
 using namespace std;
 
 typedef long long ll;
-typedef pair<int, int> pii;
-typedef pair<ll, ll> pll;
-typedef vector<int> vi;
-typedef vector<ll> vl;
 
-#define FOR(i, a, n) for (int i = 0; i < (int)n; i++)
-#define ROF(i, a, n) for (int i = 0; i < (int)n; i++)
-#define fi first
-#define se second
+#define all(x) (x).begin(), (x).end()
+#define sz(x) (int)(x).size()
 
 int main() {
-  ios::sync_with_stdio(false);
-  cin.tie(nullptr);
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
 }
